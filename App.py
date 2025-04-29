@@ -29,8 +29,8 @@ class App(ctk.CTkFrame):
         self.click_count = 0
         self.canvas = ctk.CTkCanvas(self, background=color)
         self.canvas.pack(fill="both", expand=True)
-        self.canvas.tag_bind("Circle1", "<Button-1>", lambda event: self.clicked_circle(self.current_circle1))   
-        self.canvas.tag_bind("Circle2", "<Button-1>", lambda event: self.clicked_circle(self.current_circle2)) 
+        self.canvas.tag_bind("Circle1", "<Button-1>", lambda event: self.update_circle(self.current_circle1))   
+        self.canvas.tag_bind("Circle2", "<Button-1>", lambda event: self.update_circle(self.current_circle2)) 
         self.canvas.tag_bind("Circle1", "<Enter>", lambda event: self.canvas.itemconfig(self.current_circle1, fill="green"))
         self.canvas.tag_bind("Circle1", "<Leave>", lambda event: self.canvas.itemconfig(self.current_circle1, fill="red"))
         self.canvas.tag_bind("Circle2", "<Enter>", lambda event: self.canvas.itemconfig(self.current_circle2, fill="green"))
@@ -44,13 +44,8 @@ class App(ctk.CTkFrame):
         self.button.configure(state="disabled", text ="Running...")
         self.draw_random_circle()
     
-    
-    def clicked_circle(self, circle):
-        self.last_clicked_circle = circle
+    def update_circle(self, circle):
         self.canvas.delete(circle)
-        self.update_circle()
-    
-    def update_circle(self):
         self.click_count += 1
         if self.click_count == 2:
             self.end_time = time.perf_counter()
