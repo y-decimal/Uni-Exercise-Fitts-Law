@@ -18,8 +18,8 @@ class App(ctk.CTkFrame):
         self.circle1 = None
         self.circle2 = None
         
-        self.radius = 25
-        self.distance = 100
+        self.radius = 50
+        self.distance = 200
         
         self.set_window_parameters(relative_size, aspect_ratio, minimum_size, title)
         self.pack(fill="both", expand=True)
@@ -61,7 +61,7 @@ class App(ctk.CTkFrame):
         width = self.canvas.winfo_width()
         height = self.canvas.winfo_height()
         
-        border_width = 150
+        border_width = 200
         border_bottom = 0 + border_width
         border_right = width - border_width
         border_left = 0 + border_width
