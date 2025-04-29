@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from tkinter import ttk
 import random
+import math
 
 class App(ctk.CTkFrame):
     
@@ -20,7 +21,7 @@ class App(ctk.CTkFrame):
         
         self.current_circle1, self.current_circle2 = None, None
         self.prev_circle1, self.prev_circle2 = None, None
-        self.radius = 50
+        self.radius = 30
         self.distance = 100
         self.iteration = 0
         self.canvas = ctk.CTkCanvas(self, background=color)
@@ -28,9 +29,12 @@ class App(ctk.CTkFrame):
         self.canvas.tag_bind("CircleClicked", "<Button-1>", self.draw_random_circle)
         
         
-        self.button = ctk.CTkButton(self, text="Start", command=self.draw_random_circle)
+        self.button = ctk.CTkButton(self, text="Start", command=self.start)
         self.button.pack(pady=10)
     
+    def start(self):
+        self.button.configure(state="disabled")
+        self.draw_random_circle()
     
     def draw_circle(self, x, y, r, color):
         '''Draws a circle on the canvas'''
@@ -38,6 +42,14 @@ class App(ctk.CTkFrame):
     
     def draw_random_circle(self, event=None):
         '''Draws a random circle on the canvas'''
+        
+        if (self.iteration == 27):
+            self.canvas.delete(self.current_circle1)
+            self.canvas.delete(self.current_circle2)
+            self.button.configure(state="normal")
+            self.button.pack(pady=10)
+            return
+
         self.prev_circle1 = self.current_circle1
         self.prev_circle2 = self.current_circle2
         
@@ -45,33 +57,40 @@ class App(ctk.CTkFrame):
         height = self.canvas.winfo_height()
         
         if (self.iteration % 3 == 0):
-            self.radius += 25
+            self.radius += 10
             print(f"Iteration: {self.iteration}, Radius: {self.radius}")
             
         if (self.iteration % 9 == 0):
             self.distance += 100
-            self.radius = 50
+            self.radius = 30
             print(f"Iteration: {self.iteration}, Distance: {self.distance}")
         
         r = self.radius
-        x = random.randint(0, width) 
-        y = random.randint(0, height)
+        x1 = random.randint(0, width) 
+        y1 = random.randint(0, height)
 
-        if x - r < 0:
-            x = 0+int(1.1*r)
-        elif x + r > width:
-            x = width - int(1.1*r)
-        if y - r < 0:
-            y = 0+int(1.1*r)
-        elif y + r > height:
-            y = height - int(1.1*r)
+        if x1 - r < 0:
+            x1 = 0+int(1.1*r)
+        elif x1 + r > width:
+            x1 = width - int(1.1*r)
+        if y1 - r < 0:
+            y1 = 0+int(1.1*r)
+        elif y1 + r > height:
+            y1 = height - int(1.1*r)
+            
+        x2 = x1 + random.randint(int(-self.distance), int(self.distance))          
+        y2 = y1 - math.sqrt(self.distance**2 - (x2-x1)**2)
+        while (x2-r < 0 or x2+r > width or y2-r < 0 or y2+r > height):
+            x2 = x1 + random.randint(int(-self.distance), int(self.distance))
+            y2 = y1 - math.sqrt(self.distance**2 - (x2-x1)**2)
 
-        color = "#{:06x}".format(random.randint(0, 0xFFFFFF))
-        self.current_circle1 = self.canvas.create_aa_circle(x, y, r, fill=color, tags="CircleClicked")
-        self.current_circle2 = self.canvas.create_aa_circle(x+self.distance, y+self.distance, r, fill=color, tags="CircleClicked")
+        color = "white"
+        self.current_circle1 = self.canvas.create_aa_circle(x1, y1, r, fill=color, tags="CircleClicked")
+        self.current_circle2 = self.canvas.create_aa_circle(x2, y2, r, fill=color, tags="CircleClicked")
         self.canvas.delete(self.prev_circle1)
         self.canvas.delete(self.prev_circle2)
         self.iteration += 1
+        
 
 
     def set_window_parameters(self, relative_size=0.5, aspect_ratio=16/9, minimum_size=0.2, title = "Test"):
