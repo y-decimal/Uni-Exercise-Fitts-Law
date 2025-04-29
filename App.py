@@ -31,13 +31,17 @@ class App(ctk.CTkFrame):
         self.canvas.pack(fill="both", expand=True)
         self.canvas.tag_bind("Circle1", "<Button-1>", lambda event: self.clicked_circle(self.current_circle1))   
         self.canvas.tag_bind("Circle2", "<Button-1>", lambda event: self.clicked_circle(self.current_circle2)) 
+        self.canvas.tag_bind("Circle1", "<Enter>", lambda event: self.canvas.itemconfig(self.current_circle1, fill="green"))
+        self.canvas.tag_bind("Circle1", "<Leave>", lambda event: self.canvas.itemconfig(self.current_circle1, fill="red"))
+        self.canvas.tag_bind("Circle2", "<Enter>", lambda event: self.canvas.itemconfig(self.current_circle2, fill="green"))
+        self.canvas.tag_bind("Circle2", "<Leave>", lambda event: self.canvas.itemconfig(self.current_circle2, fill="red"))
         # self.canvas.tag_bind("CircleClicked", "<Button-1>", self.clicked_circle)
         
         self.button = ctk.CTkButton(self, text="Start", command=self.start)
         self.button.pack(pady=10)
     
     def start(self):
-        self.button.configure(state="disabled")
+        self.button.configure(state="disabled", text ="Running...")
         self.draw_random_circle()
     
     
@@ -50,14 +54,12 @@ class App(ctk.CTkFrame):
         self.click_count += 1
         if self.click_count == 2:
             self.end_time = time.perf_counter()
-            print (self.end_time)
             self.time_taken = self.end_time - self.start_time
+            print(f"Time taken: {self.time_taken:.5f} seconds")
             self.click_count = 0
             self.draw_random_circle()
-            print(f"Time taken: {self.time_taken:.5f} seconds")
         else:   
             self.start_time = time.perf_counter()
-            print (self.start_time)
             
     def draw_random_circle(self, event=None):
         '''Draws a random circle on the canvas'''
@@ -65,7 +67,7 @@ class App(ctk.CTkFrame):
         if (self.iteration == 27):
             self.canvas.delete(self.current_circle1)
             self.canvas.delete(self.current_circle2)
-            self.button.configure(state="normal")
+            self.button.configure(state="normal", text = "Save", command=self.save)
             self.button.pack(pady=10)
             return
 
@@ -103,16 +105,18 @@ class App(ctk.CTkFrame):
         while (x2-r < 0 or x2+r > width or y2-r < 0 or y2+r > height):
             x2 = x1 + random.randint(int(-self.distance), int(self.distance))
             y2 = y1 - math.sqrt(self.distance**2 - (x2-x1)**2)
+            print (f"X2: {x2}, Y2: {y2}, Distance: {math.sqrt((x2-x1)**2 + (y2-y1)**2)}")
         
         self.canvas.delete(self.prev_circle1)
         self.canvas.delete(self.prev_circle2)
         
-        self.current_circle1 = self.canvas.create_aa_circle(x1, y1, r, fill=color, tags=("Circle1"))
-        self.current_circle2 = self.canvas.create_aa_circle(x2, y2, r, fill=color, tags=("Circle2"))
+        self.current_circle1 = self.canvas.create_aa_circle(x1, int(y1), r, fill=color, tags=("Circle1"))
+        self.current_circle2 = self.canvas.create_aa_circle(x2, int(y2), r, fill=color, tags=("Circle2"))
 
         self.iteration += 1
         
-
+    def save(self):
+        pass
 
     def set_window_parameters(self, relative_size=0.5, aspect_ratio=16/9, minimum_size=0.2, title = "Test"):
         '''Sets window title, window size and aspect ratio'''
