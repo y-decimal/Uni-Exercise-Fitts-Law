@@ -20,6 +20,8 @@ class App(ctk.CTkFrame):
         self.set_window_parameters(relative_size, aspect_ratio, minimum_size, title)
         self.pack(fill="both", expand=True)
         
+        self.results = []
+        
         self.current_circle1, self.current_circle2 = None, None
         self.prev_circle1, self.prev_circle2 = None, None
         self.last_clicked_circle = None
@@ -51,8 +53,11 @@ class App(ctk.CTkFrame):
             self.end_time = time.perf_counter()
             self.time_taken = self.end_time - self.start_time
             print(f"Time taken: {self.time_taken:.5f} seconds")
+            index_of_diff = self.calculate_index_of_difficulty(self.radius, self.distance)
+            self.results.append((self.radius, self.distance, index_of_diff, self.time_taken))
             self.click_count = 0
             self.draw_random_circle()
+
         else:   
             self.start_time = time.perf_counter()
             
@@ -86,7 +91,7 @@ class App(ctk.CTkFrame):
         x1 = random.randint(0+r, width-r) 
         y1 = random.randint(0+r, height-r)
         
-        print (f"X1: {x1}, Y1: {y1}, Radius: {r}")
+        # print (f"X1: {x1}, Y1: {y1}, Radius: {r}")
         
         # def gen_circle2(x1, y1, r): 
         #     x2 = x1 + random.randint(-(self.distance), self.distance)          
@@ -114,8 +119,15 @@ class App(ctk.CTkFrame):
 
         self.iteration += 1
         
+    def calculate_index_of_difficulty(self, radius, distance):
+        '''Calculates the index of difficulty using Fitts' Law'''
+        # ID = log2(distance/radius + 1)
+        # return ID
+        return math.log2((distance + radius) / radius)    
+        
     def save(self):
-        pass
+        for result in self.results:
+            print(result)
 
     def set_window_parameters(self, relative_size=0.5, aspect_ratio=16/9, minimum_size=0.2, title = "Test"):
         '''Sets window title, window size and aspect ratio'''
