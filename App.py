@@ -83,30 +83,34 @@ class App(ctk.CTkFrame):
             print(f"Iteration: {self.iteration}, Distance: {self.distance}")
         
         r = self.radius
-        x1 = random.randint(0, width) 
-        y1 = random.randint(0, height)
-
-        if x1 - r < 0:
-            x1 = 0+int(1.1*r)
-        elif x1 + r > width:
-            x1 = width - int(1.1*r)
-        if y1 - r < 0:
-            y1 = 0+int(1.1*r)
-        elif y1 + r > height:
-            y1 = height - int(1.1*r)
-            
-        x2 = x1 + random.randint(int(-self.distance), int(self.distance))          
-        y2 = y1 - math.sqrt(self.distance**2 - (x2-x1)**2)
-        while (x2-r < 0 or x2+r > width or y2-r < 0 or y2+r > height):
-            x2 = x1 + random.randint(int(-self.distance), int(self.distance))
-            y2 = y1 - math.sqrt(self.distance**2 - (x2-x1)**2)
-            print (f"X2: {x2}, Y2: {y2}, Distance: {math.sqrt((x2-x1)**2 + (y2-y1)**2)}")
+        x1 = random.randint(0+r, width-r) 
+        y1 = random.randint(0+r, height-r)
         
+        print (f"X1: {x1}, Y1: {y1}, Radius: {r}")
+        
+        # def gen_circle2(x1, y1, r): 
+        #     x2 = x1 + random.randint(-(self.distance), self.distance)          
+        #     y2 = int ( y1 - math.sqrt((self.distance+2*r)**2 - (x2-x1)**2) )
+        #     print (f"X2: {x2}, Y2: {y2}, True Distance: {math.sqrt((x2-x1)**2 + (y2-y1)**2)}, Distance: {self.distance}, Radius: {r}")
+        #     return x2, y2
+        
+        def gen_circle2_2(x1, y1, r): 
+            theta = random.uniform(0, 2*math.pi)
+            x2 = int (x1 + (self.distance+2*r) * math.cos(theta))
+            y2 = int (y1 + (self.distance+2*r) * math.sin(theta))
+            # print (f"X2: {x2}, Y2: {y2}, True Distance: {math.sqrt((x2-x1)**2 + (y2-y1)**2)}, Distance: {self.distance}, Radius: {r}")
+            return x2, y2
+        
+        x2, y2 = gen_circle2_2(x1, y1, r)
+        while (x2-r < 0 or x2+r > width or y2-r < 0 or y2+r > height):
+            x2, y2 = gen_circle2_2(x1, y1, r)
+           
+
         self.canvas.delete(self.prev_circle1)
         self.canvas.delete(self.prev_circle2)
         
-        self.current_circle1 = self.canvas.create_aa_circle(x1, int(y1), r, fill=color, tags=("Circle1"))
-        self.current_circle2 = self.canvas.create_aa_circle(x2, int(y2), r, fill=color, tags=("Circle2"))
+        self.current_circle1 = self.canvas.create_aa_circle(x1, y1, r, fill=color, tags=("Circle1"))
+        self.current_circle2 = self.canvas.create_aa_circle(x2, y2, r, fill=color, tags=("Circle2"))
 
         self.iteration += 1
         
