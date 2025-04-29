@@ -23,7 +23,7 @@ class App(ctk.CTkFrame):
         self.current_circle1, self.current_circle2 = None, None
         self.prev_circle1, self.prev_circle2 = None, None
         self.last_clicked_circle = None
-        self.radius = 30
+        self.radius = 25
         self.distance = 100
         self.iteration = 0
         self.click_count = 0
@@ -74,12 +74,12 @@ class App(ctk.CTkFrame):
         height = self.canvas.winfo_height()
         
         if (self.iteration % 3 == 0):
-            self.radius += 10
+            self.radius += 25
             print(f"Iteration: {self.iteration}, Radius: {self.radius}")
             
         if (self.iteration % 9 == 0):
-            self.distance += 100
-            self.radius = 30
+            self.distance += 200
+            self.radius = 25
             print(f"Iteration: {self.iteration}, Distance: {self.distance}")
         
         r = self.radius
