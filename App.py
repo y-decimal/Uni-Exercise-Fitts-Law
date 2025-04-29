@@ -1,5 +1,4 @@
 import customtkinter as ctk
-from tkinter import ttk
 import random
 import math
 import time
