@@ -18,8 +18,11 @@ class App(ctk.CTkFrame):
         self.set_window_parameters(relative_size, aspect_ratio, minimum_size, title)
         self.pack(fill="both", expand=True)
         
-        self.current_circle = None
-        self.prev_circle = None
+        self.current_circle1, self.current_circle2 = None, None
+        self.prev_circle1, self.prev_circle2 = None, None
+        self.radius = 50
+        self.distance = 100
+        self.iteration = 0
         self.canvas = ctk.CTkCanvas(self, background=color)
         self.canvas.pack(fill="both", expand=True)
         self.canvas.tag_bind("CircleClicked", "<Button-1>", self.draw_random_circle)
@@ -35,11 +38,22 @@ class App(ctk.CTkFrame):
     
     def draw_random_circle(self, event=None):
         '''Draws a random circle on the canvas'''
-        self.prev_circle = self.current_circle
+        self.prev_circle1 = self.current_circle1
+        self.prev_circle2 = self.current_circle2
+        
         width = self.canvas.winfo_width()
         height = self.canvas.winfo_height()
         
-        r = random.randint(100, 200)
+        if (self.iteration % 3 == 0):
+            self.radius += 25
+            print(f"Iteration: {self.iteration}, Radius: {self.radius}")
+            
+        if (self.iteration % 9 == 0):
+            self.distance += 100
+            self.radius = 50
+            print(f"Iteration: {self.iteration}, Distance: {self.distance}")
+        
+        r = self.radius
         x = random.randint(0, width) 
         y = random.randint(0, height)
 
@@ -53,8 +67,11 @@ class App(ctk.CTkFrame):
             y = height - int(1.1*r)
 
         color = "#{:06x}".format(random.randint(0, 0xFFFFFF))
-        self.current_circle = self.canvas.create_aa_circle(x, y, r, fill=color, tags="CircleClicked")
-        self.canvas.delete(self.prev_circle)
+        self.current_circle1 = self.canvas.create_aa_circle(x, y, r, fill=color, tags="CircleClicked")
+        self.current_circle2 = self.canvas.create_aa_circle(x+self.distance, y+self.distance, r, fill=color, tags="CircleClicked")
+        self.canvas.delete(self.prev_circle1)
+        self.canvas.delete(self.prev_circle2)
+        self.iteration += 1
 
 
     def set_window_parameters(self, relative_size=0.5, aspect_ratio=16/9, minimum_size=0.2, title = "Test"):
