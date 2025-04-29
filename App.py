@@ -2,6 +2,7 @@ import customtkinter as ctk
 from tkinter import ttk
 import random
 import math
+import time
 
 class App(ctk.CTkFrame):
     
@@ -21,13 +22,16 @@ class App(ctk.CTkFrame):
         
         self.current_circle1, self.current_circle2 = None, None
         self.prev_circle1, self.prev_circle2 = None, None
+        self.last_clicked_circle = None
         self.radius = 30
         self.distance = 100
         self.iteration = 0
+        self.click_count = 0
         self.canvas = ctk.CTkCanvas(self, background=color)
         self.canvas.pack(fill="both", expand=True)
-        self.canvas.tag_bind("CircleClicked", "<Button-1>", self.draw_random_circle)
-        
+        self.canvas.tag_bind("Circle1", "<Button-1>", lambda event: self.clicked_circle(self.current_circle1))   
+        self.canvas.tag_bind("Circle2", "<Button-1>", lambda event: self.clicked_circle(self.current_circle2)) 
+        # self.canvas.tag_bind("CircleClicked", "<Button-1>", self.clicked_circle)
         
         self.button = ctk.CTkButton(self, text="Start", command=self.start)
         self.button.pack(pady=10)
@@ -36,10 +40,25 @@ class App(ctk.CTkFrame):
         self.button.configure(state="disabled")
         self.draw_random_circle()
     
-    def draw_circle(self, x, y, r, color):
-        '''Draws a circle on the canvas'''
-        self.canvas.create_oval(x-r, y-r, x+r, y+r, fill=color, outline=color)
     
+    def clicked_circle(self, circle):
+        self.last_clicked_circle = circle
+        self.canvas.delete(circle)
+        self.update_circle()
+    
+    def update_circle(self):
+        self.click_count += 1
+        if self.click_count == 2:
+            self.end_time = time.perf_counter()
+            print (self.end_time)
+            self.time_taken = self.end_time - self.start_time
+            self.click_count = 0
+            self.draw_random_circle()
+            print(f"Time taken: {self.time_taken:.5f} seconds")
+        else:   
+            self.start_time = time.perf_counter()
+            print (self.start_time)
+            
     def draw_random_circle(self, event=None):
         '''Draws a random circle on the canvas'''
         
@@ -52,6 +71,7 @@ class App(ctk.CTkFrame):
 
         self.prev_circle1 = self.current_circle1
         self.prev_circle2 = self.current_circle2
+        color = "red"
         
         width = self.canvas.winfo_width()
         height = self.canvas.winfo_height()
@@ -83,12 +103,13 @@ class App(ctk.CTkFrame):
         while (x2-r < 0 or x2+r > width or y2-r < 0 or y2+r > height):
             x2 = x1 + random.randint(int(-self.distance), int(self.distance))
             y2 = y1 - math.sqrt(self.distance**2 - (x2-x1)**2)
-
-        color = "white"
-        self.current_circle1 = self.canvas.create_aa_circle(x1, y1, r, fill=color, tags="CircleClicked")
-        self.current_circle2 = self.canvas.create_aa_circle(x2, y2, r, fill=color, tags="CircleClicked")
+        
         self.canvas.delete(self.prev_circle1)
         self.canvas.delete(self.prev_circle2)
+        
+        self.current_circle1 = self.canvas.create_aa_circle(x1, y1, r, fill=color, tags=("Circle1"))
+        self.current_circle2 = self.canvas.create_aa_circle(x2, y2, r, fill=color, tags=("Circle2"))
+
         self.iteration += 1
         
 
