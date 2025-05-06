@@ -124,6 +124,8 @@ class App(ctk.CTkFrame):
             logfile.write(header)
             for result in self.results:
                 logfile.write(f"{result[0]},{result[1]},{result[2]},{result[3]}\n")
+        print("Results saved to results.csv")
+        self.button.configure(state="normal", text = "Exit", command= self.root.quit)
 
     def set_window_parameters(self, relative_size=0.5, aspect_ratio=16/9, minimum_size=0.2, title = "Test"):
         '''Sets window title, window size and aspect ratio'''
