@@ -15,6 +15,7 @@ class App(ctk.CTkFrame):
         title = "Fitts Law Test"
         color = "#1e1e1e"
         
+        self.spawn_circle = None
         self.circle1 = None
         self.circle2 = None
         
@@ -71,14 +72,18 @@ class App(ctk.CTkFrame):
         self.canvas.create_line(border_left, border_bottom, border_right, border_bottom, fill="grey", width=2)
         self.canvas.create_line(border_right, border_bottom, border_right, border_top, fill="grey", width=2)
         self.canvas.create_line(border_left, border_top, border_right, border_top, fill="grey", width=2)
+
+        
         
         r = self.radius
         x1 = random.randint(border_left+r, border_right-r) 
         y1 = random.randint(border_bottom+r, border_top-r)
-        
-        self.canvas.delete(self.circle1)    
-        self.circle1 = self.canvas.create_aa_circle(x1, y1, r, fill="red")    
+        spawn_radius = self.radius*2 + self.distance
 
+        self.canvas.delete(self.circle1)
+        self.canvas.delete(self.spawn_circle)    
+        self.circle1 = self.canvas.create_aa_circle(x1, y1, r, fill="red")    
+        self.spawn_circle = self.canvas.create_oval(x1-spawn_radius, y1-spawn_radius, x1+spawn_radius, y1+spawn_radius, outline="red", width=2)
   
         def generate_circle_2(x1, y1, r): 
             theta = random.uniform(0, 2*math.pi)
