@@ -178,3 +178,5 @@ cython_debug/
 
 # Project specific files
 *.csv
+*.zip
+*.png
