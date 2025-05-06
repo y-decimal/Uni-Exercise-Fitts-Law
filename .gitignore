@@ -176,6 +176,5 @@ cython_debug/
 # Built Visual Studio Code Extensions
 *.vsix
 
-# File Manager Test files
-assets/TestFiles/*
-assets/settings.*
+# Project specific files
+*.csv
