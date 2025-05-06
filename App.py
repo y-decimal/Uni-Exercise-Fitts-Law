@@ -20,6 +20,7 @@ class App(ctk.CTkFrame):
         self.pack(fill="both", expand=True)
         
         self.results = []
+        self.csv_file = "resultsMouse.csv"
         
         self.current_circle1, self.current_circle2 = None, None
         self.prev_circle1, self.prev_circle2 = None, None
@@ -38,11 +39,19 @@ class App(ctk.CTkFrame):
         self.canvas.tag_bind("Circle2", "<Leave>", lambda event: self.canvas.itemconfig(self.current_circle2, fill="red"))
         # self.canvas.tag_bind("CircleClicked", "<Button-1>", self.clicked_circle)
         
+        self.selector = ctk.CTkSegmentedButton(self, values=["Mouse", "VR"])
+        self.selector.pack(pady=10)
+        self.selector.set("Mouse")
         self.button = ctk.CTkButton(self, text="Start", command=self.start)
         self.button.pack(pady=10)
     
     def start(self):
         self.button.configure(state="disabled", text ="Running...")
+        self.selector.configure(state="disabled")
+        if self.selector.get() == "Mouse":
+            self.csv_file = "resultsMouse.csv"
+        else:
+            self.csv_file = "resultsVR.csv"
         self.draw_random_circle()
     
     def update_circle(self, circle):
@@ -116,16 +125,16 @@ class App(ctk.CTkFrame):
         '''Calculates the index of difficulty using Fitts' Law'''
         # ID = log2(distance/radius + 1)
         # return ID
-        return math.log2((distance + radius) / radius)    
+        return math.log2((distance / radius) +1)    
         
     def save(self):
-        with open("results.csv", "w") as logfile:
+        with open(self.csv_file, "w") as logfile:
             header = "Radius,Distance,Index of Difficulty,Time Taken\n"
             logfile.write(header)
             for result in self.results:
                 logfile.write(f"{result[0]},{result[1]},{result[2]},{result[3]}\n")
-        print("Results saved to results.csv")
-        self.button.configure(state="normal", text = "Exit", command= self.root.quit)
+        print(f"Results saved to {self.csv_file}")
+        self.root.quit()
 
     def set_window_parameters(self, relative_size=0.5, aspect_ratio=16/9, minimum_size=0.2, title = "Test"):
         '''Sets window title, window size and aspect ratio'''
