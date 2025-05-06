@@ -119,8 +119,11 @@ class App(ctk.CTkFrame):
         return math.log2((distance + radius) / radius)    
         
     def save(self):
-        for result in self.results:
-            print(result)
+        with open("results.csv", "w") as logfile:
+            header = "Radius,Distance,Index of Difficulty,Time Taken\n"
+            logfile.write(header)
+            for result in self.results:
+                logfile.write(f"{result[0]},{result[1]},{result[2]},{result[3]}\n")
 
     def set_window_parameters(self, relative_size=0.5, aspect_ratio=16/9, minimum_size=0.2, title = "Test"):
         '''Sets window title, window size and aspect ratio'''
